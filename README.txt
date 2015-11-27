@@ -6,7 +6,8 @@ An AST library for generative template metaprogramming.
 
 ////////////////////////////////////////////////////////////
 
-Build: Requires Boost C++ libraries, 
+Build: Requires Boost C++ libraries.
+Tested with Visual Studio 2015.
 
 ////////////////////////////////////////////////////////////
 
