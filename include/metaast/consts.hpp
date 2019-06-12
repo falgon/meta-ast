@@ -103,8 +103,11 @@ namespace metaast {
 
 	template <char... chars>
 	char String<chars...>::value[sizeof...(chars) + 1] = {chars..., '\0'};
-
-	#define STRING(x)	String<#@x>	//VS specific
+#ifdef __MSC_VER
+#   define STRING(x)	String<#@x>	//VS specific
+#else
+#   define STRING(x)    String<#x[0]>
+#endif
 #endif
 }
 

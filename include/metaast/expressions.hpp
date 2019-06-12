@@ -92,7 +92,7 @@ namespace metaast {
 	//binary
 	IMPL_BINARY_EXPR(binary_and,	&);
 	IMPL_BINARY_EXPR(binary_or,		|);
-	IMPL_BINARY_EXPR(xor,			^);
+	IMPL_BINARY_EXPR(binary_xor,	^);
 
 	//logical
 	IMPL_BINARY_EXPR(logical_and,	&&);

@@ -24,14 +24,14 @@ namespace metaast {
 		using formals_type = TFormals;
 		using body_type = Tbody;
 
-		template<template<typename, int> class F, int Nesting>
+		template<template<typename, int> class F, int Nest>
 		struct bind_helper {
 			template<typename T, int Nesting, int index>
 			using FormalWrapper = formal<T, index, isMethod>;
 			template<typename T, int N>
-			using BoundNameBinder = name_binder<T, TFormals, FormalWrapper, F, Nesting>;
+			using BoundNameBinder = name_binder<T, TFormals, FormalWrapper, F, Nest>;
 			//Binding applies only to function body
-			using type = typename F<Derived<Tret, Tname, TFormals, typename Tbody::template bind<BoundNameBinder, Nesting>>, Nesting>::type;
+			using type = typename F<Derived<Tret, Tname, TFormals, typename Tbody::template bind<BoundNameBinder, Nest>>, Nest>::type;
 		};
 		
 		template<template<typename, int> class F = EmptyBinder, int Nesting = 0>

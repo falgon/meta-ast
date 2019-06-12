@@ -3,6 +3,9 @@
 
 #include <cassert>
 #include <type_traits>
+#if __cplusplus >= 201402L
+#   include <utility>
+#endif
 
 namespace metaast {
 	template<typename T, int Nesting>
@@ -10,7 +13,7 @@ namespace metaast {
 
 	///////////////////////////////////////////////////////////////////////////////
 
-#if 0	//c++14
+#if __cplusplus >= 201402L
 	template <char... chars>
 	struct name : std::integer_sequence<char, chars...> {
 		template<template<typename, int> class F = EmptyBinder, int Nesting = 0>
@@ -29,10 +32,16 @@ struct name {
 	using bind = typename F<name<chars...>, Nesting>::type;
 	int operator()(void) { assert(false); return 0; }
 };
-	//c++11 but VS does not support it
-	//constexpr char to_char(const char* s) { return *s; }
-	//#define NAME(x) name<to_char(#x)>
-	#define NAME(x)	name<#@x>	//VS specific
+#ifdef __MSC_VER
+#   define NAME(x) name<#@x>
+#elif __cplusplus >= 201103L
+namespace {
+    constexpr char to_char(const char* s) { return *s; }
+} // anonymouse namespace
+	#define NAME(x)	name<to_char(#x)>	
+#else
+#   error This feature needs to be C++11
+#endif
 #endif
 
 	///////////////////////////////////////////////////////////////////////////////

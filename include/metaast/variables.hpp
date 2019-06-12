@@ -4,6 +4,7 @@
 #include <metaast/name.hpp>
 
 #include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
 
 #include <type_traits>
 
@@ -20,7 +21,7 @@ namespace metaast {
 		using bind_type = typename boost::mpl::eval_if<
 			is_name<Type>,
 			bind_named_type<F, Nesting>,
-			std::identity<Type>
+			boost::mpl::identity<Type>
 		>::type;
 
 		template<template<typename, int> class F, int Nesting>
@@ -36,7 +37,7 @@ namespace metaast {
 
 		//do not bind the name here
 		template<template<typename, int> class F = EmptyBinder, int Nesting = 0>
-		using bind = typename Derived<bind_type<F, Nesting>, Name, bind_value<F, Nesting>>;
+		using bind = Derived<bind_type<F, Nesting>, Name, bind_value<F, Nesting>>;
 	};
 
 	template <typename Type, typename Name, typename Value = void>
@@ -46,8 +47,8 @@ namespace metaast {
 	};
 	template <typename Type, typename Name>
 	struct var<Type, Name, void> : var_base<var, Type, Name, void> {
-		template <typename... Tsts>
-		Type operator()(Tsts... sts) const { return type(); }
+        template <typename... Tsts>
+		Type operator()(Tsts... sts) const { return this->type(); }
 	};
 
 	///////////////////////////////////////////////////////////////////////////////

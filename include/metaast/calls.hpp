@@ -28,7 +28,7 @@ namespace metaast {
 		using bind_func = typename boost::mpl::eval_if<
 			boost::mpl::or_<is_func_def<Tfunc>, is_method<Tfunc>, is_name<Tfunc>>,
 			bind_func_def_or_method<F, Nesting>,
-			std::identity<Tfunc>
+			boost::mpl::identity<Tfunc>
 		>::type;
 
 		template<template<typename, int> class F = EmptyBinder, int Nesting = 0>

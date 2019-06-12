@@ -30,7 +30,7 @@ namespace metaast {
 
 	template <typename Tobj, typename Tmem>
 	struct member {
-		template<typename Tclass, typename T>
+		template<typename Tclass, typename TT>
 		struct MemberNameBinder {
 			template<typename T>
 			struct get_members { using type = typename T::members; };
@@ -61,9 +61,9 @@ namespace metaast {
 				using type = member_index<member_type, index>;
 			};
 			using type = typename boost::mpl::eval_if<
-				typename has_member<T>::type,
-				member_from_name<T>,
-				std::identity<T>
+				typename has_member<TT>::type,
+				member_from_name<TT>,
+				boost::mpl::identity<TT>
 			>::type;
 		};
 		template<template<typename, int> class F = EmptyBinder, int Nesting = 0>
@@ -107,7 +107,7 @@ namespace metaast {
 
 	template <typename ObjName, typename MethodName>
 	struct unresolved_method {
-		template<typename Tclass, typename T>
+		template<typename Tclass, typename TT>
 		struct MethodNameBinder {
 			template<typename T>
 			struct get_methods { using type = typename T::methods; };
@@ -134,9 +134,9 @@ namespace metaast {
 			template <typename T>
 			struct method_from_name { using type = typename TMethods::template ref_by_name<T>::type::template bind<>; };
 			using type = typename boost::mpl::eval_if<
-				typename has_method<T>::type,
-				method_from_name<T>,
-				std::identity<T>
+				typename has_method<TT>::type,
+				method_from_name<TT>,
+				boost::mpl::identity<TT>
 			>::type;
 		};
 		template<template<typename, int> class F = EmptyBinder, int Nesting = 0>
@@ -262,7 +262,7 @@ namespace metaast {
 
 		template<template<typename, int> class F, int Nesting>
 		struct bind_helper {
-			template<typename T, int Nesting, int index>
+			template<typename T, int, int index>
 			using MemberIndexWrapper = member_index<T, index>;
 			template<typename T, int N>
 			using BoundNameBinder = name_binder<T, Members, MemberIndexWrapper, F, Nesting>;

@@ -11,7 +11,7 @@ namespace metaast {
 
 	///////////////////////////////////////////////////////////////////////////////
 
-	template<int N, template<int N> class F, typename Out = void>
+	template<int N, template<int> class F, typename Out = void>
 	struct loop {
 		template<typename... In>
 		static void apply(Out* out, In... in) {

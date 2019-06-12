@@ -18,7 +18,7 @@ namespace metaast {
 
 	template<typename Tdefs, typename Tcode>
 	struct program {
-		template<typename T, typename Vars, template<typename, int> class F, int Nesting>
+		template<typename TT, typename Vars, template<typename, int> class F, int Nesting>
 		struct custom_name_binder {
 			template <typename T>
 			struct has_var_by_name {
@@ -37,32 +37,33 @@ namespace metaast {
 			struct var_from_type { using type = typename Vars::template ref_by_type<T>::type; };
 			using type = typename F<
 				typename boost::mpl::eval_if<
-					boost::mpl::and_<is_name<T>, has_var_by_name<T>>,
-					var_from_name<T>,
+					boost::mpl::and_<is_name<TT>, has_var_by_name<TT>>,
+					var_from_name<TT>,
 					typename boost::mpl::if_<
-						has_var_by_type<T>,
-						var_from_type<T>,
-						std::identity<T>
+						has_var_by_type<TT>,
+						var_from_type<TT>,
+						boost::mpl::identity<TT>
 					>::type
 				>::type,
 				Nesting
 			>::type;
 		};
+			
+        template<int N, template <typename, int> class F, int Nesting>
+        struct bind_loop {
+            template<typename T, int>
+            using type = custom_name_binder<T, typename Tdefs::template bind<bind_loop<N - 1, F, Nesting>::template type, Nesting>, F, Nesting>;
+        };
+	    template<template <typename, int> class F, int Nesting>
+		struct bind_loop<0, F, Nesting> {
+			template<typename T, int>
+			using type = custom_name_binder<T, Tdefs, F, Nesting>;
+		};
 
 		template<template<typename, int> class F, int Nesting>
 		struct bind_helper {
-			template<int N>
-			struct bind_loop {
-				template<typename T, int>
-				using type = custom_name_binder<T, typename Tdefs::template bind<bind_loop<N - 1>::template type, Nesting>, F, Nesting>;
-			};
-			template<>
-			struct bind_loop<0> {
-				template<typename T, int>
-				using type = custom_name_binder<T, Tdefs, F, Nesting>;
-			};
 			template<typename T, int N>
-			using BoundNameBinder = typename bind_loop<Tdefs::size>::template type<T, N>;
+			using BoundNameBinder = typename bind_loop<Tdefs::size, F, Nesting>::template type<T, N>;
 			using type = typename F<program<typename Tdefs::template bind<BoundNameBinder, Nesting>, typename Tcode::template bind<BoundNameBinder, Nesting>>, Nesting>::type;
 		};
 
